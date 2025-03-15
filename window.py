@@ -1,4 +1,4 @@
-from tkinter import Tk, Canvas
+from tkinter import BOTH, Tk, Canvas
 
 from line import Line
 
@@ -8,11 +8,11 @@ class Window:
         self.__root = Tk()
         self.__root.title("Maze Solever")
         self.__canvas = Canvas(self.__root, width=width, height=height)
-        self.__canvas.pack()
+        self.__canvas.pack(fill=BOTH, expand=1)
         self.__running = False
         self.__root.protocol("WM_DELETE_WINDOW", self.close)
 
-    def draw_line(self, line: Line, fill_color: str) -> None:
+    def draw_line(self, line: Line, fill_color: str = "black") -> None:
         line.draw(self.__canvas, fill_color)
 
     def redraw(self) -> None:

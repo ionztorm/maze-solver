@@ -8,7 +8,7 @@ class Line:
         self.point1 = point1
         self.point2 = point2
 
-    def draw(self, canvas: Canvas, fill_color: str) -> None:
+    def draw(self, canvas: Canvas, fill_color: str = "black") -> None:
         canvas.create_line(
             self.point1.x,
             self.point1.y,
