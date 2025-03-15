@@ -1,11 +1,7 @@
 import time
 
-from typing import TYPE_CHECKING
-
+from cell import Cell
 from window import Window
-
-if TYPE_CHECKING:
-    from cell import Cell
 
 
 class Maze:
@@ -17,7 +13,7 @@ class Maze:
         num_cols: int,
         cell_size_x: int,
         cell_size_y: int,
-        win: Window,
+        win: Window | None = None,
     ) -> None:
         self._cells: list[list[Cell]] = []
         self._x1 = x1
@@ -27,6 +23,7 @@ class Maze:
         self._cell_size_x = cell_size_x
         self._cell_size_y = cell_size_y
         self._win = win
+        self._create_cells()
 
     def _create_cells(self) -> None:
         for _ in range(self._num_cols):
@@ -47,5 +44,6 @@ class Maze:
         self._animate()
 
     def _animate(self) -> None:
-        self._win.redraw()
-        time.sleep(0.05)
+        if self._win is not None:
+            self._win.redraw()
+            time.sleep(0.05)

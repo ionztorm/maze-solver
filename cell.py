@@ -4,7 +4,7 @@ from window import Window
 
 
 class Cell:
-    def __init__(self, win: Window) -> None:
+    def __init__(self, win: Window | None = None) -> None:
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
@@ -13,7 +13,7 @@ class Cell:
         self._x2: int | None = None
         self._y1: int | None = None
         self._y2: int | None = None
-        self._win = win
+        self._win: Window | None = win
 
     def draw(self, x1: int, y1: int, x2: int, y2: int) -> None:
         if self._win is None:
