@@ -1,4 +1,5 @@
 import time
+import random
 
 from cell import Cell
 from window import Window
@@ -11,9 +12,10 @@ class Maze:
         y1: int,
         num_rows: int,
         num_cols: int,
-        cell_size_x: int,
-        cell_size_y: int,
+        cell_size_x: float,
+        cell_size_y: float,
         win: Window | None = None,
+        seed: int | None = None,
     ) -> None:
         self._cells: list[list[Cell]] = []
         self._x1 = x1
@@ -25,6 +27,7 @@ class Maze:
         self._win = win
         self._create_cells()
         self._break_entrance_and_exit()
+        self._break_walls_r(0, 0)
 
     def _create_cells(self) -> None:
         for _ in range(self._num_cols):
@@ -36,12 +39,12 @@ class Maze:
             for j in range(self._num_rows):
                 self._draw_cell(i, j)
 
-    def _draw_cell(self, i: int, j: int) -> None:
-        x1 = self._x1 + i * self._cell_size_x
-        y1 = self._y1 + j * self._cell_size_y
+    def _draw_cell(self, col_idx: int, row_idx: int) -> None:
+        x1 = self._x1 + col_idx * self._cell_size_x
+        y1 = self._y1 + row_idx * self._cell_size_y
         x2 = x1 + self._cell_size_x
         y2 = y1 + self._cell_size_y
-        self._cells[i][j].draw(x1, y1, x2, y2)
+        self._cells[col_idx][row_idx].draw(x1, y1, x2, y2)
         self._animate()
 
     def _animate(self) -> None:
@@ -55,3 +58,53 @@ class Maze:
             self._cells[-1][-1].has_bottom_wall = False
             self._draw_cell(0, 0)
             self._draw_cell(self._num_cols - 1, self._num_rows - 1)
+
+    def _break_walls_r(self, col_idx: int, row_idx: int) -> None:
+        self._cells[col_idx][row_idx]._visited = True
+        while True:
+            to_visit: list = []
+
+            if col_idx > 0 and not self._cells[col_idx - 1][row_idx]._visited:
+                to_visit.append((col_idx - 1, row_idx))  # Left
+            if (
+                col_idx < self._num_cols - 1
+                and not self._cells[col_idx + 1][row_idx]._visited
+            ):
+                to_visit.append((col_idx + 1, row_idx))  # Right
+            if row_idx > 0 and not self._cells[col_idx][row_idx - 1]._visited:
+                to_visit.append((col_idx, row_idx - 1))  # Up
+            if (
+                row_idx < self._num_rows - 1
+                and not self._cells[col_idx][row_idx + 1]._visited
+            ):
+                to_visit.append((col_idx, row_idx + 1))  # Down
+
+            if len(to_visit) == 0:
+                self._draw_cell(col_idx, row_idx)
+                return
+
+            direction_index = random.randrange(len(to_visit))  # noqa: S311
+            next_index = to_visit[direction_index]
+            next_col, next_row = next_index
+
+            # Check column of the first neighbor (Right)
+            if next_col == col_idx + 1:
+                self._cells[col_idx][row_idx].has_right_wall = False
+                self._cells[col_idx + 1][row_idx].has_left_wall = False
+
+            # Check column of the first neighbor (Left)
+            if next_col == col_idx - 1:
+                self._cells[col_idx][row_idx].has_left_wall = False
+                self._cells[col_idx - 1][row_idx].has_right_wall = False
+
+            # Check row of the second neighbor (Down)
+            if next_row == row_idx + 1:
+                self._cells[col_idx][row_idx].has_bottom_wall = False
+                self._cells[col_idx][row_idx + 1].has_top_wall = False
+
+            # Check row of the second neighbor (Up)
+            if next_row == row_idx - 1:
+                self._cells[col_idx][row_idx].has_top_wall = False
+                self._cells[col_idx][row_idx - 1].has_bottom_wall = False
+
+            self._break_walls_r(next_col, next_row)
