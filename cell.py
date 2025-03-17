@@ -9,13 +9,14 @@ class Cell:
         self.has_right_wall = True
         self.has_top_wall = True
         self.has_bottom_wall = True
-        self._x1: int | None = None
-        self._x2: int | None = None
-        self._y1: int | None = None
-        self._y2: int | None = None
+        self._x1: float | None = None
+        self._x2: float | None = None
+        self._y1: float | None = None
+        self._y2: float | None = None
         self._win: Window | None = win
+        self._visited: bool = False
 
-    def draw(self, x1: int, y1: int, x2: int, y2: int) -> None:
+    def draw(self, x1: float, y1: float, x2: float, y2: float) -> None:
         if self._win is None:
             return
         self._x1 = x1
