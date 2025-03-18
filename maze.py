@@ -83,9 +83,9 @@ class Maze:
                 self._draw_cell(col_idx, row_idx)
                 return
 
-            direction_index = random.randrange(len(to_visit))  # noqa: S311
-            next_index = to_visit[direction_index]
-            next_col, next_row = next_index
+            direction_idx = random.randrange(len(to_visit))  # noqa: S311
+            next_cell = to_visit[direction_idx]
+            next_col, next_row = next_cell
 
             # Check column of the first neighbor (Right)
             if next_col == col_idx + 1:
